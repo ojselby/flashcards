@@ -1,1 +1,1 @@
-{"new": {"1.Nf3 Nf6": "2. c4", "1.Nf3 c5": "2. c4", "1.Nf3 d5": "2. c4", "1.Nf3 d5 2.c4 e6": "3. b3"}, "written": {}, "learnt": [], "learning": ["1.Nf3 d5 2.c4 e6", "1.Nf3 Nf6", "1.Nf3 c5", "1.Nf3 d5"]}
+{"new": {"1.Nf3 Nf6": "2. c4", "1.Nf3 c5": "2. c4", "1.Nf3 d5": "2. c4", "1.Nf3 d5 2.c4 e6": "3. b3"}, "written": {}, "learnt": ["1.Nf3 Nf6", "1.Nf3 c5"], "learning": ["1.Nf3 d5", "1.Nf3 d5 2.c4 e6"]}

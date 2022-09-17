@@ -78,20 +78,19 @@ def setup_cards(next_mode='flash'):
         return
 
     def finish():
-        setup_frame.destroy()
+        setup_window.destroy()
         if next_mode == 'flash':
             flashcard_mode()
         return
 
-    setup_frame = tk.Frame(master=window)
-    setup_frame.pack()
+    setup_window = tk.Tk()
 
-    reset_frame = tk.Frame(master=setup_frame)
+    reset_frame = tk.Frame(master=setup_window)
     reset_button = tk.Button(master=reset_frame, text='reset cards', command=reset)
     reset_frame.pack()
     reset_button.pack()
 
-    add_frame = tk.Frame(master=setup_frame)
+    add_frame = tk.Frame(master=setup_window)
     add_frame.pack()
 
     front_frame = tk.Frame(master=add_frame)
@@ -111,8 +110,10 @@ def setup_cards(next_mode='flash'):
     add_button = tk.Button(master=add_frame, text='add card', command=add)
     add_button.pack()
 
-    finish_button = tk.Button(master=setup_frame, text='start learning', command=finish)
+    finish_button = tk.Button(master=setup_window, text='start learning', command=finish)
     finish_button.pack()
+
+    setup_window.mainloop()
     return
 
 
@@ -156,8 +157,12 @@ def flashcard_mode():
         with open('stored_cards.txt', 'w') as cards_file:
             cards_file.write(json.dumps(data))
 
-        window.destroy()
+        flash_window.destroy()
         return
+
+    def on_closing():
+        if messagebox.askokcancel("Quit", "If you close without pressing done you will lose data?"):
+            flash_window.destroy()
 
     with open('stored_cards.txt', 'r') as cards_file:
         data = json.load(cards_file)
@@ -171,26 +176,27 @@ def flashcard_mode():
 
     front = data['learning'].pop(0)
 
-    flash_frame = tk.Frame(master=window, width=100, height=100, bg='white')
-    flash_frame.grid(sticky='nsew')
+    flash_window = tk.Tk()
 
-    flash_frame.columnconfigure([0, 2], weight=1, minsize=75)
-    flash_frame.rowconfigure([0, 2], weight=1, minsize=75)
-    flash_frame.rowconfigure(1, weight=2, minsize=75)
-    flash_frame.columnconfigure(1, weight=2, minsize=75)
-    word_label = tk.Label(master=flash_frame, text=f'{front}')
-    flip_button = tk.Button(master=flash_frame, text=f'flip card',
+    flash_window.columnconfigure([0, 2], weight=1, minsize=75)
+    flash_window.rowconfigure([0, 2], weight=1, minsize=75)
+    flash_window.rowconfigure(1, weight=2, minsize=75)
+    flash_window.columnconfigure(1, weight=2, minsize=75)
+    word_label = tk.Label(master=flash_window, text=f'{front}')
+    flip_button = tk.Button(master=flash_window, text=f'flip card',
                             command=lambda: flip_to_back(front))
-    right_button = tk.Button(master=flash_frame, text='right', command=lambda: right(front))
-    wrong_button = tk.Button(master=flash_frame, text='wrong', command=lambda: wrong(front))
-    done_button = tk.Button(master=flash_frame, text='done', command=lambda: done(front))
+    right_button = tk.Button(master=flash_window, text='right', command=lambda: right(front))
+    wrong_button = tk.Button(master=flash_window, text='wrong', command=lambda: wrong(front))
+    done_button = tk.Button(master=flash_window, text='done', command=lambda: done(front))
     word_label.grid(row=1, column=1, sticky='nsew')
     flip_button.grid(row=2, column=1)
     right_button.grid(row=2, column=2, sticky='nsew')
     wrong_button.grid(row=2, column=0, sticky='nsew')
     done_button.grid(row=0, column=2, sticky='ne')
-    return
 
+    flash_window.protocol("WM_DELETE_WINDOW", on_closing)
+    flash_window.mainloop()
+    return
 
 
 def reset_data(data):
@@ -216,17 +222,9 @@ def main(setup=True):
     else:
         flashcard_mode()
 
-    def on_closing():
-        if messagebox.askokcancel("Quit", "If you close without pressing done you will lose data?"):
-            window.destroy()
-
-    window.protocol("WM_DELETE_WINDOW", on_closing)
-
-    window.mainloop()
     show_cards()
     return
 
 
 if __name__ == '__main__':
-    window = tk.Tk()
     main()
